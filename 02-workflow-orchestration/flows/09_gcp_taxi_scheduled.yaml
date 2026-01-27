@@ -33,6 +33,8 @@ tasks:
       type: io.kestra.plugin.core.runner.Process
     commands:
       - wget -qO- https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{{inputs.taxi}}/{{render(vars.file)}}.gz | gunzip > {{render(vars.file)}}
+      - echo "UNCOMPRESSED_SIZE=$(du -h {{render(vars.file)}} | cut -f1)" >> $KESRA_OUTPUTS
+
 
   - id: upload_to_gcs
     type: io.kestra.plugin.gcp.gcs.Upload
