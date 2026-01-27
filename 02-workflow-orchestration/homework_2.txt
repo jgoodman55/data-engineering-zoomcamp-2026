@@ -1,0 +1,17 @@
+1. Added line 47 to https://github.com/jgoodman55/data-engineering-zoomcamp-2026/blob/main/02-workflow-orchestration/flows/08_gcp_taxi.yaml
+to see the uncompressed file size
+
+2. {{inputs.taxi}}_tripdata_{{inputs.year}}-{{inputs.month}}.csv -> yellow_tripdata_2020_04.csv
+
+3. SELECT count(1) FROM `kestra-sandbox-485323.zoomcamp.yellow_tripdata` where 
+  SPLIT(filename, '_')[OFFSET(0)] = 'yellow'
+  AND SUBSTR(SPLIT(filename, '_')[OFFSET(2)], 1, 4) = '2020';
+
+4. SELECT count(1) FROM `kestra-sandbox-485323.zoomcamp.green_tripdata` where 
+  SPLIT(filename, '_')[OFFSET(0)] = 'green'
+  AND SUBSTR(SPLIT(filename, '_')[OFFSET(2)], 1, 4) = '2020';
+
+5. SELECT count(1) FROM `kestra-sandbox-485323.zoomcamp.yellow_tripdata` where 
+  filename = 'yellow_tripdata_2021-03.csv';
+
+6. Add a timezone property set to America/New_York in the Schedule trigger configuration
