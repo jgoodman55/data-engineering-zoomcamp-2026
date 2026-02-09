@@ -11,7 +11,7 @@ import time
 BUCKET_NAME = "data-engineering-module-03-jgoodman"
 
 # If you authenticated through the GCP SDK you can comment out these two lines
-# CREDENTIALS_FILE = "gcs.json"
+# CREDENTIALS_FILE = "C:\\gcp\\data-engineering-module-03-f5cc93ddc073.json"
 # client = storage.Client.from_service_account_json(CREDENTIALS_FILE)
 # If commented initialize client with the following
 client = storage.Client(project='data-engineering-module-03')
