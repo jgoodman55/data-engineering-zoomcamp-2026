@@ -10,7 +10,9 @@ import time
 # Change this to your bucket name
 BUCKET_NAME = "data-engineering-module-03-jgoodman"
 
-COLOR = "yellow"
+COLOR = "green"
+
+YEAR = 2020
 
 # If you authenticated through the GCP SDK you can comment out these two lines
 # CREDENTIALS_FILE = "C:\\gcp\\data-engineering-module-03-f5cc93ddc073.json"
@@ -19,8 +21,8 @@ COLOR = "yellow"
 client = storage.Client(project='data-engineering-module-03')
 
 
-BASE_URL = F"https://d37ci6vzurychx.cloudfront.net/trip-data/{COLOR}_tripdata_2024-"
-MONTHS = [f"{i:02d}" for i in range(1, 7)]
+BASE_URL = f"https://d37ci6vzurychx.cloudfront.net/trip-data/{COLOR}_tripdata_{YEAR}-"
+MONTHS = [f"{i:02d}" for i in range(1, 13)]
 DOWNLOAD_DIR = "."
 
 CHUNK_SIZE = 8 * 1024 * 1024
@@ -32,7 +34,7 @@ bucket = client.bucket(BUCKET_NAME)
 
 def download_file(month):
     url = f"{BASE_URL}{month}.parquet"
-    file_path = os.path.join(DOWNLOAD_DIR, f"{COLOR}_tripdata_2024-{month}.parquet")
+    file_path = os.path.join(DOWNLOAD_DIR, f"{COLOR}_tripdata_{YEAR}-{month}.parquet")
 
     try:
         print(f"Downloading {url}...")
