@@ -1,0 +1,36 @@
+1. If you run dbt run --select int_trips_unioned, what models will be built?
+Only dbt run --select int_trips_unioned
+
+2. New value 6 appears in payment_type. What happens on dbt test?
+Fails test with non-zero exit code
+
+3. Count of records in fct_monthly_zone_revenue?
+
+SELECT count(1) FROM `data-engineering-module-03.ny_taxi_ny_taxi.fct_monthly_zone_revenue`;
+
+4. Best Performing Zone for Green Taxis (2020)
+
+-- East Harlem North
+SELECT pickup_zone, sum(revenue_monthly_total_amount) FROM `data-engineering-module-03.ny_taxi_ny_taxi.fct_monthly_zone_revenue`
+where service_type = 'Green' and revenue_month between '2020-01-01' and '2020-12-31'
+group by pickup_zone
+;
+
+5. Green Taxi Trip Counts (October 2019)
+Using the fct_monthly_zone_revenue table, what is the total number of trips (total_monthly_trips) for Green taxis in October 2019?
+
+-- 384624
+SELECT sum(total_monthly_trips) FROM `data-engineering-module-03.ny_taxi_ny_taxi.fct_monthly_zone_revenue`
+where service_type = 'Green' and revenue_month between '2019-10-01' and '2019-10-31'
+;
+
+6. Create a staging model for the For-Hire Vehicle (FHV) trip data for 2019.
+
+Load the FHV trip data for 2019 into your data warehouse
+Create a staging model stg_fhv_tripdata with these requirements:
+Filter out records where dispatching_base_num IS NULL
+Rename fields to match your project's naming conventions (e.g., PUlocationID → pickup_location_id)
+What is the count of records in stg_fhv_tripdata?
+
+-- 43244693
+SELECT count(1) FROM `data-engineering-module-03.ny_taxi.stg_fhv_tripdata`;
