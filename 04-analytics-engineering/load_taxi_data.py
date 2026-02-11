@@ -21,7 +21,7 @@ YEAR = 2020
 client = storage.Client(project='data-engineering-module-03')
 
 
-BASE_URL = f"https://d37ci6vzurychx.cloudfront.net/trip-data/{COLOR}_tripdata_{YEAR}-"
+BASE_URL = f"https://github.com/DataTalksClub/nyc-tlc-data/releases"
 MONTHS = [f"{i:02d}" for i in range(1, 13)]
 DOWNLOAD_DIR = "."
 
@@ -33,8 +33,8 @@ bucket = client.bucket(BUCKET_NAME)
 
 
 def download_file(month):
-    url = f"{BASE_URL}{month}.parquet"
-    file_path = os.path.join(DOWNLOAD_DIR, f"{COLOR}_tripdata_{YEAR}-{month}.parquet")
+    url = f"{BASE_URL}"
+    file_path = os.path.join(DOWNLOAD_DIR, f"{COLOR}_tripdata_{YEAR}-{month}.csv.gz")
 
     try:
         print(f"Downloading {url}...")
@@ -106,12 +106,13 @@ def upload_to_gcs(file_path, max_retries=3):
 
 
 if __name__ == "__main__":
-    create_bucket(BUCKET_NAME)
+    # create_bucket(BUCKET_NAME)
 
     with ThreadPoolExecutor(max_workers=4) as executor:
         file_paths = list(executor.map(download_file, MONTHS))
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        executor.map(upload_to_gcs, filter(None, file_paths))  # Remove None values
+    # with ThreadPoolExecutor(max_workers=4) as executor:
+    #     executor.map(upload_to_gcs, filter(None, file_paths))  # Remove None values
 
-    print("All files processed and verified.")
+    # print("All files processed and verified.")
+    # download_file()
