@@ -1,11 +1,11 @@
 import os
 import sys
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from google.cloud import storage
 from google.api_core.exceptions import NotFound, Forbidden
 import time
-
+import requests
+import gzip
 
 # Change this to your bucket name
 BUCKET_NAME = "data-engineering-module-03-jgoodman"
@@ -33,17 +33,31 @@ bucket = client.bucket(BUCKET_NAME)
 
 
 def download_file(month):
-    url = f"{BASE_URL}"
-    file_path = os.path.join(DOWNLOAD_DIR, f"{COLOR}_tripdata_{YEAR}-{month}.csv.gz")
-
+    """Download and unzip a taxi data CSV.GZ file"""
+    filename = f"{COLOR}_tripdata_{YEAR}-{month}.csv"
+    url = f"{BASE_URL}/{COLOR}/{filename}.gz"
+    file_path = os.path.join(DOWNLOAD_DIR, filename)
+    
     try:
-        print(f"Downloading {url}...")
-        urllib.request.urlretrieve(url, file_path)
-        print(f"Downloaded: {file_path}")
-        return file_path
+        print(f"Downloading: {filename}.gz")
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        
+        # Decompress and write CSV file
+        with gzip.GzipFile(fileobj=response.raw) as gz_file:
+            with open(file_path, 'wb') as out_file:
+                out_file.write(gz_file.read())
+        
+        file_size = os.path.getsize(file_path) / (1024 * 1024)  # Size in MB
+        print(f"✓ Successfully saved: {filename} ({file_size:.2f} MB)")
+        return True
+    
+    except requests.exceptions.RequestException as e:
+        print(f"✗ Failed to download {filename}: {e}")
+        return False
     except Exception as e:
-        print(f"Failed to download {url}: {e}")
-        return None
+        print(f"✗ Error processing {filename}: {e}")
+        return False
 
 
 def create_bucket(bucket_name):
