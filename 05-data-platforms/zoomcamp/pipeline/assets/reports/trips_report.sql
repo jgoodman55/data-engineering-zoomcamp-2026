@@ -5,55 +5,61 @@
 # - Materialization: https://getbruin.com/docs/bruin/assets/materialization
 # - Quality checks: https://getbruin.com/docs/bruin/quality/available_checks
 
-# TODO: Set the asset name (recommended: reports.trips_report).
-name: TODO_SET_ASSET_NAME
+# trips Report - Aggregates tipping patterns and metrics
+name: reports.trips_report
 
-# TODO: Set platform type.
-# Docs: https://getbruin.com/docs/bruin/assets/sql
-# suggested type: duckdb.sql
-type: TODO
+# Platform type
+type: duckdb.sql
 
-# TODO: Declare dependency on the staging asset(s) this report reads from.
+# Declare dependency on the staging asset(s) this report reads from
 depends:
-  - TODO_DEP_STAGING_ASSET
+  - staging.trips
 
-# TODO: Choose materialization strategy.
-# For reports, `time_interval` is a good choice to rebuild only the relevant time window.
-# Important: Use the same `incremental_key` as staging (e.g., pickup_datetime) for consistency.
+# Choose materialization strategy
+# time_interval rebuilds only the relevant time window for efficiency
 materialization:
   type: table
-  # suggested strategy: time_interval
-  strategy: TODO
-  # TODO: set to your report's date column
-  incremental_key: TODO
-  # TODO: set to `date` or `timestamp`
-  time_granularity: TODO
+  incremental_key: pickup_datetime
 
-# TODO: Define report columns + primary key(s) at your chosen level of aggregation.
+# Define report columns
 columns:
-  - name: TODO_dim
-    type: TODO
-    description: TODO
-    primary_key: true
-  - name: TODO_date
-    type: DATE
-    description: TODO
-    primary_key: true
-  - name: TODO_metric
-    type: BIGINT
-    description: TODO
-    checks:
-      - name: non_negative
+  - name: date
+    type: date
+    description: Date of the trip
+  - name: payment_type
+    type: string
+    description: Payment type
+  - name: total_trips
+    type: float
+    description: Total trips collected
+  - name: average_tip
+    type: float
+    description: Average tip amount
+  - name: max_tip
+    type: float
+    description: Maximum tip amount
+  - name: trip_count
+    type: int
+    description: Number of trips with trips
 
 @bruin */
 
--- Purpose of reports:
--- - Aggregate staging data for dashboards and analytics
--- Required Bruin concepts:
--- - Filter using `{{ start_datetime }}` / `{{ end_datetime }}` for incremental runs
--- - GROUP BY your dimension + date columns
+-- Purpose: Aggregate tip data for analysis and monitoring
+-- - Filter using {{ start_datetime }} / {{ end_datetime }} for incremental runs
+-- - GROUP BY dimension and date columns for reporting
 
-SELECT * -- TODO: replace with your aggregation logic
+SELECT
+  DATE(tpep_pickup_datetime) as date,
+  payment_type,
+  SUM(tip_amount) as total_trips,
+  AVG(tip_amount) as average_tip,
+  MAX(tip_amount) as max_tip,
+  COUNT(*) as trip_count
 FROM staging.trips
-WHERE pickup_datetime >= '{{ start_datetime }}'
-  AND pickup_datetime < '{{ end_datetime }}'
+WHERE tpep_pickup_datetime >= '{{ start_datetime }}'
+  AND tpep_pickup_datetime < '{{ end_datetime }}'
+  AND tip_amount > 0
+GROUP BY
+  DATE(tpep_pickup_datetime),
+  payment_type
+ORDER BY date DESC, total_trips DESC

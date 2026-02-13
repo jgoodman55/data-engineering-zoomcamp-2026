@@ -53,11 +53,11 @@ SELECT
   d.tolls_amount,
   d.total_amount,
   d.taxi_type,
-  COALESCE(p.payment_description, 'Unknown') as payment_description,
+  COALESCE(p.payment_type_name, 'Unknown') as payment_type_name,
   d.extracted_at
 FROM deduplicated_trips d
 LEFT JOIN ingestion.payment_lookup p
-  ON d.payment_type = p.payment_id
+  ON d.payment_type = p.payment_type_id
 WHERE d.rn = 1
   -- Filter out obviously invalid rows
   AND d.tpep_pickup_datetime IS NOT NULL
