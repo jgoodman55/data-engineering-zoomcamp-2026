@@ -1,7 +1,6 @@
 .gcp/
 *.json
 *.parquet
-*.csv
 *.db
 
 # Byte-compiled / optimized / DLL files
