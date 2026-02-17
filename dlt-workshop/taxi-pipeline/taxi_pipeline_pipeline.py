@@ -16,14 +16,18 @@ def taxi_pipeline_rest_api_source():
             {
                 "name": "taxi_data",
                 "endpoint": {
-                    "path": "",  # Empty path, data is at root
+                    "path": "",
                     "method": "GET",
                     "params": {
-                        "limit": 1000000,  # Fetch all data at once
+                        "limit": 1000,
                     },
-                    "data_selector": "[*]",  # Extract all items from the response array
+                    "data_selector": "[*]",
                     "paginator": {
-                        "type": "single_page",
+                        "type": "page_number",
+                        "page_param": "page",
+                        "base_page": 1,
+                        "stop_after_empty_page": True,
+                        "total_path": None
                     },
                 },
             },
