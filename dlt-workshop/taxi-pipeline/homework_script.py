@@ -10,12 +10,14 @@ tables = conn.execute("""
 """).fetchall()
 
 result_df = conn.execute(f'SELECT * FROM "taxi_pipeline_dataset"."taxi_data"').fetchdf()
-print(len(result_df))
-# conn.execute(f'DELETE FROM "taxi_pipeline_dataset"."taxi_data"')
-# for schema, table_name in tables:
-#     count = conn.execute(f'SELECT COUNT(*) FROM "{schema}"."{table_name}"').fetchone()[0]
 
-#     print(f"{schema}.{table_name}: {count:,} rows")
+# Q1: What is the date range of the data in the `taxi_data` table?
+print("Q1: ",min(result_df['trip_pickup_date_time']), max(result_df['trip_pickup_date_time']))
 
+# Q2: What proportion of trips are paid with credit card?
+print("Q2: ", result_df[result_df['payment_type'] == 'Credit'].shape[0] / result_df.shape[0])
+
+# Q3: What is the total amount of money generated in tips? (1 point)
+print("Q3: ", result_df['tip_amt'].sum())
 
 conn.close()
